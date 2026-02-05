@@ -1,0 +1,7 @@
+wj/target/
+wj/.idea/
+wj/*.iml
+wj-vue/node_modules/
+wj-vue/dist/
+wj-vue/.idea/
+.DS_Store
