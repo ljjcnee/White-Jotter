@@ -47,15 +47,24 @@ export default {
       this.chart = echarts.init(this.$el, 'macarons')
 
       this.chart.setOption({
+        title: {
+          text: '各类图书借阅热度',
+          left: 'center',
+          top: '5',
+          textStyle: {
+            color: '#666',
+            fontSize: 14
+          }
+        },
         tooltip: {
           trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          axisPointer: {
+            type: 'shadow'
           }
         },
         radar: {
-          radius: '66%',
-          center: ['50%', '42%'],
+          radius: '60%',
+          center: ['50%', '55%'],
           splitNumber: 8,
           splitArea: {
             areaStyle: {
@@ -67,19 +76,21 @@ export default {
               shadowOffsetY: 15
             }
           },
+          // 修改点：指标改为中文图书分类
           indicator: [
-            { name: 'Sales', max: 10000 },
-            { name: 'Administration', max: 20000 },
-            { name: 'Information Techology', max: 20000 },
-            { name: 'Customer Support', max: 20000 },
-            { name: 'Development', max: 20000 },
-            { name: 'Marketing', max: 20000 }
+            { name: '文学', max: 10000 },
+            { name: '流行', max: 20000 },
+            { name: '文化', max: 20000 },
+            { name: '生活', max: 20000 },
+            { name: '经管', max: 20000 },
+            { name: '科技', max: 20000 }
           ]
         },
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']
+          // 修改点：改为中文含义
+          data: ['总库存', '已借出', '热度指数']
         },
         series: [{
           type: 'radar',
@@ -96,15 +107,15 @@ export default {
           data: [
             {
               value: [5000, 7000, 12000, 11000, 15000, 14000],
-              name: 'Allocated Budget'
+              name: '总库存'
             },
             {
               value: [4000, 9000, 15000, 15000, 13000, 11000],
-              name: 'Expected Spending'
+              name: '已借出'
             },
             {
               value: [5500, 11000, 12000, 15000, 12000, 12000],
-              name: 'Actual Spending'
+              name: '热度指数'
             }
           ],
           animationDuration: animationDuration

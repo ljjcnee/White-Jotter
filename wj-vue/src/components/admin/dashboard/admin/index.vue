@@ -1,6 +1,5 @@
 <template>
   <div class="dashboard-editor-container">
-    <!--<github-corner class="github-corner" />-->
 
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
@@ -26,31 +25,19 @@
       </el-col>
     </el-row>
 
-    <el-row :gutter="8">
-      <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 12}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
-        <transaction-table />
-      </el-col>
-      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <todo-list />
-      </el-col>
-      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <box-card />
-      </el-col>
-    </el-row>
-  </div>
+    </div>
 </template>
 
 <script>
-// import GithubCorner from '@/components/GithubCorner'
+// 移除了不需要的组件引用
 import PanelGroup from './components/PanelGroup'
 import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
 import LineChart from './components/LineChart'
 import BarChart from './components/BarChart'
-import TransactionTable from './components/TransactionTable'
-import TodoList from './components/TodoList'
-import BoxCard from './components/BoxCard'
 
+// 定义图表数据 (模拟数据)
+// 这里的 key (newVisitis) 对应 PanelGroup 传过来的事件参数
 const lineChartData = {
   newVisitis: {
     expectedData: [100, 120, 161, 134, 105, 160, 165],
@@ -73,15 +60,11 @@ const lineChartData = {
 export default {
   name: 'DashboardAdmin',
   components: {
-    // GithubCorner,
     PanelGroup,
     RaddarChart,
     LineChart,
     PieChart,
-    BarChart,
-    TransactionTable,
-    TodoList,
-    BoxCard
+    BarChart
   },
   data () {
     return {
@@ -100,20 +83,15 @@ export default {
 .dashboard-editor-container {
   padding: 32px;
   background-color: #f6f6f6;
+  min-height: 100vh; // 让灰色背景铺满全屏
   position: relative;
-  margin: -20px 0 0 -10px;
-
-  .github-corner {
-    position: absolute;
-    top: 0px;
-    border: 0;
-    right: 0;
-  }
 
   .chart-wrapper {
     background: #fff;
     padding: 16px 16px 0;
     margin-bottom: 32px;
+    border-radius: 8px; // 增加圆角，更现代
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1); // 增加轻微阴影
   }
 }
 

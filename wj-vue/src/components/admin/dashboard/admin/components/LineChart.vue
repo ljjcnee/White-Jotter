@@ -64,7 +64,8 @@ export default {
     setOptions ({ expectedData, actualData } = {}) {
       this.chart.setOption({
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          // 修改点：星期改为中文
+          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           boundaryGap: false,
           axisTick: {
             show: false
@@ -90,10 +91,12 @@ export default {
           }
         },
         legend: {
-          data: ['expected', 'actual']
+          // 修改点：图例改为中文
+          data: ['预期', '实际']
         },
         series: [{
-          name: 'expected',
+          // 修改点：系列名改为中文
+          name: '预期',
           itemStyle: {
             normal: {
               color: '#FF005A',
@@ -110,7 +113,8 @@ export default {
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'actual',
+          // 修改点：系列名改为中文
+          name: '实际',
           smooth: true,
           type: 'line',
           itemStyle: {

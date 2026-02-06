@@ -47,14 +47,23 @@ export default {
       this.chart = echarts.init(this.$el, 'macarons')
 
       this.chart.setOption({
+        title: {
+          text: '本周流通统计',
+          left: 'center',
+          top: '5',
+          textStyle: {
+            color: '#666',
+            fontSize: 14
+          }
+        },
         tooltip: {
           trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          axisPointer: {
+            type: 'shadow'
           }
         },
         grid: {
-          top: 10,
+          top: 40, // 留出标题位置
           left: '2%',
           right: '2%',
           bottom: '3%',
@@ -62,7 +71,8 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          // 修改点：中文星期
+          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           axisTick: {
             alignWithLabel: true
           }
@@ -73,22 +83,26 @@ export default {
             show: false
           }
         }],
+        legend: {
+          data: ['借出', '归还', '入库'],
+          top: 20
+        },
         series: [{
-          name: 'pageA',
+          name: '借出',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
           data: [79, 52, 200, 334, 390, 330, 220],
           animationDuration
         }, {
-          name: 'pageB',
+          name: '归还',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
           data: [80, 52, 200, 334, 390, 330, 220],
           animationDuration
         }, {
-          name: 'pageC',
+          name: '入库',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',

@@ -45,6 +45,15 @@ export default {
       this.chart = echarts.init(this.$el, 'macarons')
 
       this.chart.setOption({
+        title: {
+          text: '热门借阅分类',
+          left: 'center',
+          top: '20',
+          textStyle: {
+            color: '#666',
+            fontSize: 14
+          }
+        },
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)'
@@ -52,21 +61,22 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          // 修改点：中文分类
+          data: ['小说', '计算机', '历史', '哲学', '艺术']
         },
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: '借阅分布',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
-            center: ['50%', '38%'],
+            center: ['50%', '50%'], // 稍微下移一点避开标题
             data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
+              { value: 320, name: '小说' },
+              { value: 240, name: '计算机' },
+              { value: 149, name: '历史' },
+              { value: 100, name: '哲学' },
+              { value: 59, name: '艺术' }
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600
