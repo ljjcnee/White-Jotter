@@ -54,13 +54,18 @@ public class BorrowRecordService {
         }
     }
 
-    // 4. 查询所有记录 (给后台柱状图用的)
+    // 4. 查询所有记录
     public List<BorrowRecord> list() {
         return borrowRecordDAO.findAll();
     }
 
-    // ↓↓↓ 5. 补上这个缺失的方法 (给后台顶部数字用的) ↓↓↓
+    // 5. 统计总历史记录
     public long count() {
         return borrowRecordDAO.count();
+    }
+
+    // ↓↓↓ 6. 新增：统计当前在借 (status = 0) ↓↓↓
+    public int countCurrentBorrows() {
+        return borrowRecordDAO.countByStatus(0);
     }
 }

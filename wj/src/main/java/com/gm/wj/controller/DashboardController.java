@@ -1,5 +1,6 @@
 package com.gm.wj.controller;
 
+import com.gm.wj.entity.Book;
 import com.gm.wj.entity.BorrowRecord;
 import com.gm.wj.entity.Category;
 import com.gm.wj.result.Result;
@@ -31,83 +32,149 @@ public class DashboardController {
     @Autowired
     CategoryService categoryService;
 
-    /**
-     * 接口1：顶部卡片统计数据
-     */
+    // 1. 顶部卡片
     @GetMapping("/api/admin/dashboard/status")
     public Result getStatus() {
         Map<String, Object> statusMap = new HashMap<>();
-
-        // 获取数据库真实记录数
         long userCount = userService.count();
         long bookCount = bookService.count();
-        long borrowCount = borrowRecordService.count();
-        // 模拟一个访问量 (基础值 + 用户数 * 5)
-        long visitCount = 1200 + userCount * 5;
+        long borrowCount = borrowRecordService.count(); // 历史总借阅
+
+        // ↓↓↓ 修改：这里不再是 visitCount，而是真实的“当前在借”数量 ↓↓↓
+        int currentBorrowCount = borrowRecordService.countCurrentBorrows();
 
         statusMap.put("userCount", userCount);
         statusMap.put("bookCount", bookCount);
         statusMap.put("borrowCount", borrowCount);
-        statusMap.put("visitCount", visitCount);
+        // 我们继续沿用 visitCount 这个 key 发给前端，但值已经是“当前在借”了
+        statusMap.put("visitCount", currentBorrowCount);
 
         return ResultFactory.buildSuccessResult(statusMap);
     }
 
-    /**
-     * 接口2：饼图数据 (各分类下的图书数量)
-     */
+    // 2. 饼图
     @GetMapping("/api/admin/dashboard/pie")
     public Result getPieChartData() {
         List<Map<String, Object>> pieData = new ArrayList<>();
         List<Category> categories = categoryService.list();
-
-        // 遍历所有分类
         for (Category category : categories) {
             Map<String, Object> item = new HashMap<>();
             item.put("name", category.getName());
-            // 查询该分类下的书本数量
             item.put("value", bookService.listByCategory(category.getId()).size());
             pieData.add(item);
         }
         return ResultFactory.buildSuccessResult(pieData);
     }
 
-    /**
-     * 接口3：柱状图数据 (最近7天真实借阅量)
-     */
+    // 3. 柱状图
     @GetMapping("/api/admin/dashboard/bar")
     public Result getBarChartData() {
         Map<String, Object> barData = new HashMap<>();
         List<String> dates = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
 
-        // 1. 获取所有借阅记录
         List<BorrowRecord> allRecords = borrowRecordService.list();
 
-        // 2. 循环最近 7 天
         for (int i = 6; i >= 0; i--) {
             LocalDate date = LocalDate.now().minusDays(i);
-            // 格式化日期字符串，用于跟数据库记录比对 (例如 "2026-02-06")
             String dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            // 格式化显示用的日期 (例如 "02-06")
             String showDateStr = date.format(DateTimeFormatter.ofPattern("MM-dd"));
-
             dates.add(showDateStr);
 
-            // 3. 统计这一天的借书数量
             int count = 0;
             for (BorrowRecord record : allRecords) {
-                // 如果借阅时间不为空，且以今天的日期开头
                 if (record.getBorrowTime() != null && record.getBorrowTime().startsWith(dateStr)) {
                     count++;
                 }
             }
             values.add(count);
         }
-
         barData.put("dates", dates);
         barData.put("values", values);
-
         return ResultFactory.buildSuccessResult(barData);
+    }
+
+    // 4. 折线图
+    @GetMapping("/api/admin/dashboard/line")
+    public Result getLineChartData() {
+        Map<String, Object> lineData = new HashMap<>();
+        List<String> dates = new ArrayList<>();
+        List<Integer> borrowCounts = new ArrayList<>();
+        List<Integer> returnCounts = new ArrayList<>();
+
+        List<BorrowRecord> allRecords = borrowRecordService.list();
+
+        for (int i = 6; i >= 0; i--) {
+            LocalDate date = LocalDate.now().minusDays(i);
+            String dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            dates.add(date.format(DateTimeFormatter.ofPattern("MM-dd")));
+
+            int bCount = 0;
+            int rCount = 0;
+
+            for (BorrowRecord record : allRecords) {
+                if (record.getBorrowTime() != null && record.getBorrowTime().startsWith(dateStr)) {
+                    bCount++;
+                }
+                if (record.getReturnTime() != null && record.getReturnTime().startsWith(dateStr)) {
+                    rCount++;
+                }
+            }
+            borrowCounts.add(bCount);
+            returnCounts.add(rCount);
+        }
+
+        lineData.put("dates", dates);
+        lineData.put("actualData", borrowCounts);
+        lineData.put("expectedData", returnCounts);
+        return ResultFactory.buildSuccessResult(lineData);
+    }
+
+    // 5. 雷达图
+    @GetMapping("/api/admin/dashboard/radar")
+    public Result getRadarChartData() {
+        List<Category> categories = categoryService.list();
+        if (categories.size() > 6) {
+            categories = categories.subList(0, 6);
+        }
+
+        List<Map<String, Object>> indicators = new ArrayList<>();
+        List<Integer> stockList = new ArrayList<>();
+        List<Integer> borrowList = new ArrayList<>();
+
+        List<Book> allBooks = bookService.list();
+        List<BorrowRecord> allRecords = borrowRecordService.list();
+
+        for (Category category : categories) {
+            Map<String, Object> indicator = new HashMap<>();
+            indicator.put("name", category.getName());
+            indicator.put("max", 20);
+            indicators.add(indicator);
+
+            int stock = 0;
+            for (Book book : allBooks) {
+                if (book.getCategory() != null && book.getCategory().getId() == category.getId()) {
+                    stock++;
+                }
+            }
+            stockList.add(stock);
+
+            int borrows = 0;
+            for (BorrowRecord record : allRecords) {
+                if (record.getBook() != null &&
+                        record.getBook().getCategory() != null &&
+                        record.getBook().getCategory().getId() == category.getId()) {
+                    borrows++;
+                }
+            }
+            borrowList.add(borrows);
+        }
+
+        Map<String, Object> radarData = new HashMap<>();
+        radarData.put("indicators", indicators);
+        radarData.put("stock", stockList);
+        radarData.put("borrows", borrowList);
+
+        return ResultFactory.buildSuccessResult(radarData);
     }
 }

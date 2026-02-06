@@ -3,11 +3,12 @@
 </template>
 
 <script>
+// 1. Import 必须在最前
 import echarts from 'echarts'
 import resize from './mixins/resize'
-require('echarts/theme/macarons') // echarts theme
 
-const animationDuration = 3000
+// 2. Require 在后
+require('echarts/theme/macarons') // echarts theme
 
 export default {
   mixins: [resize],
@@ -23,11 +24,23 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    value: {
+      type: Object,
+      default: () => ({ indicators: [], stock: [], borrows: [] })
     }
   },
   data () {
     return {
       chart: null
+    }
+  },
+  watch: {
+    value: {
+      deep: true,
+      handler (val) {
+        this.setOptions(val)
+      }
     }
   },
   mounted () {
@@ -45,12 +58,14 @@ export default {
   methods: {
     initChart () {
       this.chart = echarts.init(this.$el, 'macarons')
-
+      this.setOptions(this.value)
+    },
+    setOptions ({ indicators, stock, borrows } = {}) {
       this.chart.setOption({
         title: {
-          text: '各类图书借阅热度',
+          text: '分类馆藏与热度分析',
           left: 'center',
-          top: '5',
+          top: '10',
           textStyle: {
             color: '#666',
             fontSize: 14
@@ -63,38 +78,25 @@ export default {
           }
         },
         radar: {
-          radius: '60%',
-          center: ['50%', '55%'],
+          radius: '55%', // 缩小一点半径
+          center: ['50%', '40%'], // 核心修改：大幅向上移动中心点 (从 55% -> 40%)
           splitNumber: 8,
-          splitArea: {
-            areaStyle: {
-              color: 'rgba(127,95,132,.3)',
-              opacity: 1,
-              shadowBlur: 45,
-              shadowColor: 'rgba(0,0,0,.5)',
-              shadowOffsetX: 0,
-              shadowOffsetY: 15
+          indicator: indicators,
+          name: {
+            textStyle: {
+              color: '#999'
             }
-          },
-          // 修改点：指标改为中文图书分类
-          indicator: [
-            { name: '文学', max: 10000 },
-            { name: '流行', max: 20000 },
-            { name: '文化', max: 20000 },
-            { name: '生活', max: 20000 },
-            { name: '经管', max: 20000 },
-            { name: '科技', max: 20000 }
-          ]
+          }
         },
         legend: {
           left: 'center',
-          bottom: '10',
-          // 修改点：改为中文含义
-          data: ['总库存', '已借出', '热度指数']
+          bottom: '10', // 图例依然在底部，但因为图上移了，所以不会重叠
+          data: ['馆藏数量', '借阅热度']
         },
         series: [{
           type: 'radar',
           symbolSize: 0,
+          // ESLint 格式：多行属性
           areaStyle: {
             normal: {
               shadowBlur: 13,
@@ -106,19 +108,15 @@ export default {
           },
           data: [
             {
-              value: [5000, 7000, 12000, 11000, 15000, 14000],
-              name: '总库存'
+              value: stock,
+              name: '馆藏数量'
             },
             {
-              value: [4000, 9000, 15000, 15000, 13000, 11000],
-              name: '已借出'
-            },
-            {
-              value: [5500, 11000, 12000, 15000, 12000, 12000],
-              name: '热度指数'
+              value: borrows,
+              name: '借阅热度'
             }
           ],
-          animationDuration: animationDuration
+          animationDuration: 3000
         }]
       })
     }

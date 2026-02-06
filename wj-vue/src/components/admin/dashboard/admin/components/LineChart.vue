@@ -3,8 +3,11 @@
 </template>
 
 <script>
+// 1. Import 必须在最前
 import echarts from 'echarts'
 import resize from './mixins/resize'
+
+// 2. Require 在后
 require('echarts/theme/macarons') // echarts theme
 
 export default {
@@ -61,11 +64,19 @@ export default {
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)
     },
-    setOptions ({ expectedData, actualData } = {}) {
+    setOptions ({ expectedData, actualData, dates } = {}) {
       this.chart.setOption({
+        title: {
+          text: '近七日借还趋势',
+          textStyle: {
+            fontSize: 14,
+            color: '#666'
+          },
+          left: '10',
+          top: '10'
+        },
         xAxis: {
-          // 修改点：星期改为中文
-          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+          data: dates,
           boundaryGap: false,
           axisTick: {
             show: false
@@ -75,7 +86,7 @@ export default {
           left: 10,
           right: 10,
           bottom: 20,
-          top: 30,
+          top: 60, // 把图表往下推，留出头部空间
           containLabel: true
         },
         tooltip: {
@@ -91,48 +102,51 @@ export default {
           }
         },
         legend: {
-          // 修改点：图例改为中文
-          data: ['预期', '实际']
+          data: ['借书量', '还书量'],
+          right: 10, // 图例放在右上角
+          top: 10
         },
-        series: [{
-          // 修改点：系列名改为中文
-          name: '预期',
-          itemStyle: {
-            normal: {
-              color: '#FF005A',
-              lineStyle: {
+        series: [
+          {
+            name: '还书量',
+            // 严格换行以通过 ESLint
+            itemStyle: {
+              normal: {
                 color: '#FF005A',
-                width: 2
+                lineStyle: {
+                  color: '#FF005A',
+                  width: 2
+                }
               }
-            }
+            },
+            smooth: true,
+            type: 'line',
+            data: expectedData,
+            animationDuration: 2800,
+            animationEasing: 'cubicInOut'
           },
-          smooth: true,
-          type: 'line',
-          data: expectedData,
-          animationDuration: 2800,
-          animationEasing: 'cubicInOut'
-        },
-        {
-          // 修改点：系列名改为中文
-          name: '实际',
-          smooth: true,
-          type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#3888fa',
-              lineStyle: {
+          {
+            name: '借书量',
+            smooth: true,
+            type: 'line',
+            // 严格换行以通过 ESLint
+            itemStyle: {
+              normal: {
                 color: '#3888fa',
-                width: 2
-              },
-              areaStyle: {
-                color: '#f3f8ff'
+                lineStyle: {
+                  color: '#3888fa',
+                  width: 2
+                },
+                areaStyle: {
+                  color: '#f3f8ff'
+                }
               }
-            }
-          },
-          data: actualData,
-          animationDuration: 2800,
-          animationEasing: 'quadraticOut'
-        }]
+            },
+            data: actualData,
+            animationDuration: 2800,
+            animationEasing: 'quadraticOut'
+          }
+        ]
       })
     }
   }
