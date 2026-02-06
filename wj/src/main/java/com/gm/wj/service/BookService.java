@@ -75,4 +75,9 @@ public class BookService {
         Book book = bookDAO.findById(id).orElse(null);
         return book;
     }
+
+    // 统计总图书数
+    public long count() {
+        return bookDAO.count();
+    }
 }

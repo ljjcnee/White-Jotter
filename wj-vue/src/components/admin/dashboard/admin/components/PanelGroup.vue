@@ -1,5 +1,6 @@
 <template>
   <el-row :gutter="40" class="panel-group">
+
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
         <div class="card-panel-icon-wrapper icon-people">
@@ -9,7 +10,7 @@
           <div class="card-panel-text">
             今日访客
           </div>
-          <count-to :start-val="0" :end-val="3734" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="info.visitCount" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -17,13 +18,13 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('messages')">
         <div class="card-panel-icon-wrapper icon-message">
-          <i class="el-icon-message" style="font-size: 50px"></i>
+          <i class="el-icon-chat-dot-square" style="font-size: 50px"></i>
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            系统消息
+            注册用户
           </div>
-          <count-to :start-val="0" :end-val="676" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="info.userCount" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -37,7 +38,7 @@
           <div class="card-panel-text">
             借阅总量
           </div>
-          <count-to :start-val="0" :end-val="292" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="info.borrowCount" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -51,7 +52,7 @@
           <div class="card-panel-text">
             馆藏总数
           </div>
-          <count-to :start-val="0" :end-val="7690" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="info.bookCount" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -64,6 +65,20 @@ import CountTo from 'vue-count-to'
 export default {
   components: {
     CountTo
+  },
+  // ↓↓↓ 新增 props，接收父组件传来的真实数据 ↓↓↓
+  props: {
+    info: {
+      type: Object,
+      default: () => {
+        return {
+          userCount: 0,
+          bookCount: 0,
+          borrowCount: 0,
+          visitCount: 0
+        }
+      }
+    }
   },
   methods: {
     handleSetLineChartData (type) {

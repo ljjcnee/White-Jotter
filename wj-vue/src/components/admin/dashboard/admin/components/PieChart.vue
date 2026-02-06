@@ -3,8 +3,11 @@
 </template>
 
 <script>
+// 1. 先写所有的 import
 import echarts from 'echarts'
 import resize from './mixins/resize'
+
+// 2. 再写 require 或其他代码
 require('echarts/theme/macarons') // echarts theme
 
 export default {
@@ -21,11 +24,24 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    // 接收父组件传来的真实数据
+    value: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
     return {
       chart: null
+    }
+  },
+  watch: {
+    value: {
+      deep: true,
+      handler (val) {
+        this.setOptions(val)
+      }
     }
   },
   mounted () {
@@ -43,16 +59,13 @@ export default {
   methods: {
     initChart () {
       this.chart = echarts.init(this.$el, 'macarons')
-
+      this.setOptions(this.value)
+    },
+    setOptions (data) {
       this.chart.setOption({
         title: {
-          text: '热门借阅分类',
-          left: 'center',
-          top: '20',
-          textStyle: {
-            color: '#666',
-            fontSize: 14
-          }
+          text: '馆藏图书分类占比',
+          left: 'center'
         },
         tooltip: {
           trigger: 'item',
@@ -61,23 +74,16 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          // 修改点：中文分类
-          data: ['小说', '计算机', '历史', '哲学', '艺术']
+          data: data.map(item => item.name)
         },
         series: [
           {
-            name: '借阅分布',
+            name: '分类统计',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
-            center: ['50%', '50%'], // 稍微下移一点避开标题
-            data: [
-              { value: 320, name: '小说' },
-              { value: 240, name: '计算机' },
-              { value: 149, name: '历史' },
-              { value: 100, name: '哲学' },
-              { value: 59, name: '艺术' }
-            ],
+            center: ['50%', '50%'],
+            data: data,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }

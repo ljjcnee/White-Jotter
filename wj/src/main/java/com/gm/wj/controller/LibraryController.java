@@ -4,7 +4,8 @@ import com.gm.wj.entity.Book;
 import com.gm.wj.result.Result;
 import com.gm.wj.result.ResultFactory;
 import com.gm.wj.service.BookService;
-import com.gm.wj.service.BorrowRecordService; // 1. 新增导入
+// ↓↓↓ 关键修改：加上这行导入 ↓↓↓
+import com.gm.wj.service.BorrowRecordService;
 import com.gm.wj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map; // 2. 新增导入，用于接收 {uid, bid} 这种数据
+import java.util.Map;
 
 /**
  * Library controller.
@@ -26,7 +27,7 @@ public class LibraryController {
     @Autowired
     BookService bookService;
 
-    // ↓↓↓ 3. 新增：注入借阅记录服务 ↓↓↓
+    // 注入借阅记录服务
     @Autowired
     BorrowRecordService borrowRecordService;
 
@@ -83,31 +84,26 @@ public class LibraryController {
         }
     }
 
-    // ↓↓↓ 核心修改区域：替换了原来的 borrowBook，并新增了 query 和 return ↓↓↓
+    // ↓↓↓ 借阅相关接口 ↓↓↓
 
     /**
      * 1. 借书接口
-     * 接收参数：{ "uid": 1, "bid": 15 }
      */
     @PostMapping("/api/borrow")
     public Result borrowBook(@RequestBody Map<String, Integer> request) {
-        // 从请求体中获取用户ID和书籍ID
         int uid = request.get("uid");
         int bid = request.get("bid");
-
-        // 调用 Service 进行业务处理（扣库存 + 记账）
         String res = borrowRecordService.borrow(uid, bid);
 
         if ("success".equals(res)) {
             return ResultFactory.buildSuccessResult("借阅成功");
         } else {
-            return ResultFactory.buildFailResult(res); // 比如库存不足
+            return ResultFactory.buildFailResult(res);
         }
     }
 
     /**
      * 2. 查询我的书架接口
-     * 接收参数：URL?uid=1
      */
     @GetMapping("/api/mybooks")
     public Result getMyBooks(@RequestParam("uid") int uid) {
@@ -116,11 +112,10 @@ public class LibraryController {
 
     /**
      * 3. 还书接口
-     * 接收参数：{ "id": 记录ID }
      */
     @PostMapping("/api/return")
     public Result returnBook(@RequestBody Map<String, Integer> request) {
-        int id = request.get("id"); // 这里传的是借阅记录的 ID，不是书的 ID
+        int id = request.get("id");
         borrowRecordService.returnBook(id);
         return ResultFactory.buildSuccessResult("还书成功");
     }

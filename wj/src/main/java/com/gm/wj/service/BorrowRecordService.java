@@ -17,46 +17,50 @@ public class BorrowRecordService {
     @Autowired
     BookService bookService;
 
-    // 1. 借书业务
+    // 1. 借书
     public String borrow(int uid, int bid) {
         Book book = bookService.getById(bid);
         if (book.getNums() <= 0) {
             return "库存不足";
         }
-
-        // 扣减库存
         book.setNums(book.getNums() - 1);
         bookService.addOrUpdate(book);
 
-        // 生成记录
         BorrowRecord record = new BorrowRecord();
         record.setUid(uid);
         record.setBook(book);
-        record.setStatus(0); // 0表示未还
+        record.setStatus(0);
         record.setBorrowTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         borrowRecordDAO.save(record);
-
         return "success";
     }
 
-    // 2. 查询我的书架（只查未还的）
+    // 2. 查我的书
     public List<BorrowRecord> getMyBooks(int uid) {
         return borrowRecordDAO.findAllByUidAndStatus(uid, 0);
     }
 
-    // 3. 还书业务
-    public void returnBook(int id) { // 这里的 id 是借阅记录的 ID
+    // 3. 还书
+    public void returnBook(int id) {
         BorrowRecord record = borrowRecordDAO.findById(id).orElse(null);
         if (record != null && record.getStatus() == 0) {
-            // 状态改为已还
             record.setStatus(1);
             record.setReturnTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             borrowRecordDAO.save(record);
 
-            // 库存加回 1
             Book book = record.getBook();
             book.setNums(book.getNums() + 1);
             bookService.addOrUpdate(book);
         }
+    }
+
+    // 4. 查询所有记录 (给后台柱状图用的)
+    public List<BorrowRecord> list() {
+        return borrowRecordDAO.findAll();
+    }
+
+    // ↓↓↓ 5. 补上这个缺失的方法 (给后台顶部数字用的) ↓↓↓
+    public long count() {
+        return borrowRecordDAO.count();
     }
 }
