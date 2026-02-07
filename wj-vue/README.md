@@ -41,6 +41,7 @@ WhiteJotter-Project/
 │   ├── static/         # 静态资源
 │   └── package.json    # NPM 依赖管理
 └── README.md           # 项目说明文档
+```
 🚀 快速开始
 1. 环境准备
 JDK: 1.8+
