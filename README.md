@@ -1,189 +1,134 @@
-![wjlogo.png](https://i.loli.net/2019/12/15/sYnuTIrDUwAfGgo.png)
+# 基于智慧学习的图书馆管理系统 (White-Jotter)
 
----
+## 📖 项目简介
 
-![lisense](https://img.shields.io/github/license/Antabot/White-Jotter)
-![release](https://img.shields.io/github/v/release/Antabot/White-Jotter)
+本项目是**山东师范大学**毕业设计项目，题目为**《基于智慧学习的图书馆管理系统的设计与实现》**。
 
+该系统是一个前后端分离的 Web 应用，旨在提供一个现代化的图书管理平台，并融合了“智慧学习”的理念（通过笔记/文章模块实现知识沉淀）。项目采用行业主流的 **Spring Boot + Vue** 架构，实现了图书管理、用户权限控制、数据可视化展示以及个人知识库（Jotter）等功能。
 
-这是一个简单的前后端分离项目，主要采用 Vue.js + SpringBoot 技术栈开发。
+## 🛠️ 技术栈
 
-除了用作入门练习，我还希望该项目可以作为一些常见 Web 项目的脚手架，帮助大家简化搭建网站的流程。之所以叫白卷，是因为它从 0 开始，会随着时间的推移逐渐完善。
+### 后端 (Backend)
+基于 **Spring Boot 2.1.1** 构建，提供 RESTful API 接口。
+* **核心框架**: Spring Boot 2.1.1.RELEASE
+* **安全框架**: Apache Shiro 1.4.1 (实现用户认证与细粒度权限控制)
+* **持久层**: Spring Data JPA (ORM 框架)
+* **数据库**: MySQL 8.0.16
+* **缓存**: Redis (提升系统性能)
+* **工具库**: Lombok, Hutool, Fastjson
+* **日志**: Log4j2
 
-https://github.com/Antabot/White-Jotter)
+### 前端 (Frontend)
+基于 **Vue.js 2.x** 构建的单页面应用 (SPA)。
+* **核心框架**: Vue.js 2.6.10, Vue Router, Vuex
+* **UI 组件库**: Element-UI 2.12.0
+* **HTTP 客户端**: Axios 0.18.0
+* **图表可视化**: ECharts 4.2.1 (用于后台数据大屏展示)
+* **Markdown 编辑器**: mavon-editor 2.6.17 (用于撰写学习笔记/文章)
 
-欢迎加入微信圈子 【开发者】 分享、讨论学习经验：
+## 📂 项目结构
 
-![圈子](https://i.loli.net/2020/01/17/HySWdM7wDfF8EKC.png)
+```text
+WhiteJotter-Project/
+├── wj/                 # 后端项目 (Spring Boot)
+│   ├── src/main/java   # Java 源代码
+│   ├── src/main/resources
+│   │   ├── application.properties # 配置文件
+│   │   └── wj.sql      # 数据库初始化脚本
+│   └── pom.xml         # Maven 依赖管理
+├── wj-vue/             # 前端项目 (Vue)
+│   ├── src/            # 前端源代码 (组件、路由、状态管理)
+│   ├── static/         # 静态资源
+│   └── package.json    # NPM 依赖管理
+└── README.md           # 项目说明文档
+🚀 快速开始
+1. 环境准备
+JDK: 1.8+
 
-感谢 JetBrains 提供全家桶开源许可，IDEA 确实是 Java 领域最好用的 IDE。
+Node.js: 6.0+ (建议使用 LTS 版本)
 
-<a href="https://www.jetbrains.com/?from=White-Jotter"><img src="https://i.loli.net/2020/06/15/wfyV6jGX8F9RPhB.png" width = "200" height = "216" alt="" align=center /></a>
+MySQL: 5.7 或 8.0+
 
-# 整体效果
+Redis: 3.0+
 
-## 首页
+2. 数据库配置
+在 MySQL 中创建一个名为 wj 的数据库。
 
-作为展示页面，包括开发这个项目的主要参考资料、近期更新和 Slogan
+导入后端项目中的 wj/src/main/resources/wj.sql 脚本以初始化表结构和数据。
 
-![首页](https://img-blog.csdnimg.cn/20190403215932913.png)
+确保您的数据库账号密码与配置文件一致（默认 root/123456）。
 
-## 图书馆
+3. 后端启动 (wj)
+进入 wj 目录。
 
-提供图书信息展示功能
+修改 src/main/resources/application.properties (如果您的数据库或 Redis 密码不同):
 
-![图书馆](https://i.loli.net/2019/12/03/AGLbIupct68ThBD.png)
+Properties
+spring.datasource.username=root
+spring.datasource.password=123456
+spring.redis.host=localhost
+spring.redis.port=6379
+运行 WjApplication.java 启动服务。
 
-## 笔记本
+后端服务默认运行在端口 8443。
 
-提供笔记、博文展示功能
+4. 前端启动 (wj-vue)
+进入 wj-vue 目录。
 
-![笔记本首页.png](https://i.loli.net/2020/01/20/VAsOapuWriB6RFT.png)
+安装依赖：
 
-![文章内容.png](https://i.loli.net/2020/01/20/DQgbpy2LKhiZc4x.png)
-
-## 后台管理
-
-包含 dashboard、内容管理、用户及权限管理等
-
-![后台](https://img-blog.csdnimg.cn/20191202200516251.png)
-
-# 架构图
-
-- **应用架构**
-
-![应用架构](https://img-blog.csdnimg.cn/20200524211402855.JPG)
-
-- **技术架构**
-
-![技术架构](https://img-blog.csdnimg.cn/20200524211507112.JPG)
-
-# 主要技术栈
-
-## 前端
-
-1.Vue.js  
-2.ElementUI  
-3.axios   
-
-## 后端
-
-1.Spring Boot  
-2.Apache Shiro
-3.Apache Log4j2
-4.Spring Data JPA
-5.Spring Data Redis
-
-## 数据库
-
-1.MySQL  
-2.Redis
-
-# 部署方法
-
-1.clone 项目到本地
-
-`git clone https://github.com/Antabot/White-Jotter`
-
-2.在 mysql 中创建数据库 `wj`，运行项目，将自动注入数据。如需关闭此功能，请将 `application.properties` 中的 `spring.datasource.initialization-mode=always` 代码删除。
-
-数据库完整脚本 `wj.sql` 放在后端项目的 `src\main\resources` 目录下，也可根据需要自行在 MySQL 中执行数据库脚本。  
-
-运行项目前请启动 Redis 服务，端口为 6379（默认端口），密码为空。
-
-3.数据库配置在后端项目的 `src\main\resources` 目录下的`application.properties` 文件中，mysql 版本为 8.0.15   。
-
-4.在IntelliJ IDEA中运行后端项目，为了保证项目成功运行，可以右键点击 `pom.xml` 选择 maven -> reimport ，并重启项目
-
-至此，服务端就启动成功了，同时，运行前端项目，访问 `http://localhost:8080` ，即可进入登录页面，默认账号是 `admin`，密码是 `123`
-
-如果要做二次开发，请继续看第五、六步。
-
-5.进入前端项目根目录中，在命令行依次输入如下命令：  
-
-```
-# 安装依赖
+Bash
 npm install
+启动开发服务器：
 
-# 在 localhost:8080 启动项目
+Bash
 npm run dev
+浏览器访问 http://localhost:8080 (默认端口)。
 
-```
+✨ 主要功能模块
+图书管理模块
 
-由于在 `wj-vue` 项目中已经配置了端口转发，将数据转发到SpringBoot上，因此项目启动之后，在浏览器中输入 `http://localhost:8080` 就可以访问我们的前端项目了，所有的请求通过端口转发将数据传到 SpringBoot 中（注意此时不要关闭 SpringBoot 项目）。
+图书的增删改查 (CRUD)。
 
-6.最后可以用 `WebStorm` 等工具打开 `wj-vue`项目，继续开发，开发完成后，当项目要上线时，依然进入到 `wj-vue` 目录，然后执行如下命令：  
+按分类筛选图书。
 
-```
-npm run build
-```
+图书搜索功能。
 
-该命令执行成功之后， `wj-vue` 目录下生成一个 `dist` 文件夹，可以将该文件夹中的两个文件 `static` 和 `index.html` 拷贝到 `wj` 项目中 `resources/static/` 目录下，然后直接运行 `wj` 项目，访问 `http://localhost:8443` ，实际上是把前端打包后作为静态文件，但不推荐使用这种方式。
+借阅/图书馆模块
 
-前后端分离部署的方式详见教程第十篇：[「图片上传与项目的打包部署」](https://learner.blog.csdn.net/article/details/97619312)
+展示馆藏书籍信息。
 
-# 教程
+智慧学习/笔记模块 (Jotter)
 
-我在 CSDN 上分享了开发这个项目的教程，有兴趣的小伙伴可以点击下面的链接查看。  
+集成 Markdown 编辑器，支持富文本写作。
 
-1.[项目简介](https://blog.csdn.net/Neuf_Soleil/article/details/88925013)
+文章管理与发布。
 
-2.[使用 CLI 搭建 Vue.js 项目](https://blog.csdn.net/Neuf_Soleil/article/details/88926242)
+后台管理系统
 
-3.[前后端结合测试（登录页面开发）](https://blog.csdn.net/Neuf_Soleil/article/details/88955387)
+数据看板: 使用 ECharts 展示借阅统计、用户活跃度等关键指标。
 
-4.[数据库的引入](https://blog.csdn.net/Neuf_Soleil/article/details/89294300)
+用户管理: 查看与管理注册用户信息。
 
-5.[使用 Element 辅助前端开发](https://blog.csdn.net/Neuf_Soleil/article/details/89298717)
+内容管理: 管理图书信息、广告 Banner、文章内容等。
 
-6.[前端路由与登录拦截器](https://learner.blog.csdn.net/article/details/89422585)
+权限控制
 
-7.[导航栏与图书页面设计](https://learner.blog.csdn.net/article/details/89853305)
+基于 Shiro 实现的登录认证。
 
-8.[数据库设计与增删改查](https://learner.blog.csdn.net/article/details/92413933)
+基于角色的访问控制 (RBAC)，区分管理员与普通用户权限。
 
-9.[核心功能的前端实现](https://learner.blog.csdn.net/article/details/95310666)
+📸 系统截图
+(在此处添加你的项目截图，例如首页、后台管理页等，这对于毕设演示非常重要)
 
-10.[图片上传与项目的打包部署](https://learner.blog.csdn.net/article/details/97619312)
+📄 许可证
+MIT
 
-11.[用户角色权限管理模块设计](https://learner.blog.csdn.net/article/details/100849732)
 
-12.[访问控制及其实现思路](https://learner.blog.csdn.net/article/details/101121899)
+***
 
-13.[使用 Shiro 实现用户信息加密与登录认证](https://learner.blog.csdn.net/article/details/102690035)
+### 📝 补充建议（针对毕业设计）：
 
-14.[用户认证方案与完善的访问拦截](https://learner.blog.csdn.net/article/details/102788866)
-
-15.[动态加载后台菜单](https://learner.blog.csdn.net/article/details/103114893)
-
-16.[功能级访问控制的实现](https://learner.blog.csdn.net/article/details/103250775)
-
-17.[后台角色、权限与菜单分配](https://learner.blog.csdn.net/article/details/103603726)
-
-18.[博客功能开发](https://learner.blog.csdn.net/article/details/104033436)
-
-19.[项目优化解决方案](https://learner.blog.csdn.net/article/details/104763090)
-
-(持续更新中)
-
-# 重要更新
-
-## 2020
-
-01-20 利用开源 markdown 编辑器实现文章展示与管理模块
-
----
-
-## 2019 
-
-12-01 实现功能级权限控制  
-11-30 利用 vue-elment-admin 项目完善后台界面设计  
-11-17 重构项目，完成搭建后台基础界面，实现按角色加载菜单，取消前台访问限制  
-04-27 使用前端拦截器，数据库迁移至 mysql 8.0.15，后台管理页面初始化  
-04-13 完成图片的上传功能  
-04-11 完成图书分类功能  
-04-08 完成图书分页功能  
-04-06 完成图书查询功能  
-04-05 完成图书修改功能  
-04-04 完成图书删除功能  
-04-03 完成图书新增功能
+1.  **关于“智慧学习”**：我在功能模块里特别提到了 **Jotter (笔记模块)** 和 **Mavon Editor**，这是你项目中体现“学习/知识沉淀”的关键点，答辩时可以重点介绍这个模块是“智慧学习”的基础。
+2.  **截图占位符**：文档里留了 `📸 系统截图` 的位置，建议你截几张图（比如登录页、图书展示页、ECharts 后台大屏）放进项目里（可以新建一个 `screenshots` 文件夹），然后在 Markdown 里引用，这样导师看 GitHub 时第一印象会非常好。
+3.  **数据库文件**：我在“快速开始”里提到了 `wj.sql`，请确保你上传代码时，`wj/src/main/resources/`
